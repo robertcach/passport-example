@@ -5,11 +5,11 @@ const EMAIL_PATTERN = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+
 const PASSWORD_PATTERN = /^.{8,}$/i;
 const SALT_ROUNDS = 10;
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: 'name is required',
-    minLength: [3, 'name needs at least 3 chars']
+    minlength: [3, 'name needs at least 3 chars']
   },
   email: {
     type: String,
@@ -20,10 +20,29 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: 'password is required',
-    match: [PASSWORD_PATTERN, 'password needs at least 8 chars'],
-  },
+    match: [PASSWORD_PATTERN, 'password needs at least 8 chars']
+  }
 });
 
-const User = mongoose.model('User', userSchema);
 
+userSchema.pre('save', function(next) { // No es arrow function porque no se podría acceder a "this"
+  const user = this;
+
+  if (user.isModified('password')) {
+    bcrypt.hash(user.password, SALT_ROUNDS)
+      .then((hash) => {
+        user.password = hash;
+        next();
+      })
+      .catch(err => next(err))
+  } else {
+    next();
+  }
+})
+
+userSchema.methods.checkPassword = function(password) {
+  return bcrypt.compare(password, this.password)
+}
+
+const User = mongoose.model('User', userSchema)
 module.exports = User;
