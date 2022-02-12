@@ -33,10 +33,10 @@ passport.use('local-auth', new LocalStrategy(
                 if(!match) {
                     next(null, false, { error: 'Email os password are incorrect.'})
                 } else {
-                  if (user.active) {
+                  if (user.active) { // Si el valor de la clave "active" del usuario es "true"
                     next(null, user)
                   } else {
-                    next(null, false, { error: 'You have to active your account' })
+                    next(null, false, { error: 'You have to active your account' }) // Si el valor de la clave "active" del usuario es "false"
                   }
                 }
               })
@@ -53,6 +53,8 @@ passport.use('google-auth', new GoogleStrategy(
     callbackURL: '/auth/google/callback'
   },
   (accessToken, refreshToken, profile, next) => {
+    console.log(profile);
+    
     const googleID = profile.id;
     const name = profile.displayName;
     const email = profile.emails && profile.emails[0].value || undefined;

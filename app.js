@@ -4,7 +4,8 @@ const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 const path = require('path')
-const passport = require('passport')
+const passport = require('passport');
+const flash = require('connect-flash');
 
 require('./config/db.config');
 require('./config/hbs.config');
@@ -20,6 +21,7 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
+app.use(flash());
 
 app.use(sessionConfig);
 
@@ -50,6 +52,7 @@ app.use((req, res, next) => {
   // NO ENTENDER.
   // Guarda al usuario de la sesión con el nombre "currentUser" para usarlo en todas las vistas
   // ¿En qué momento los datos del usuario autenticado por passport pasa al objeto res.locals?
+  res.locals.flashMessage = req.flash('flashMessage');
   next();
 })
 

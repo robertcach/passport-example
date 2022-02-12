@@ -58,6 +58,7 @@ const doLogin = (req, res, next, provider = 'local-auth') => {
         if (loginError) {
           next(loginError)
         } else {
+          req.flash('flashMessage', 'You have succesfully signed in')
           res.redirect('/profile')
         }
       })
@@ -87,6 +88,9 @@ module.exports.active = (req, res, next) => {
     { activationToken, active: false }, // Busca al usuario que cumple con esos dos parámetros de búsqueda
     { active: true } // Luego cambia el valor de "active" a "true".
   )
-  .then(() => res.redirect('/login'))
+  .then(() => {
+    req.flash('flashMessage', 'You have activated your account. Welcome!')
+    res.redirect('/login')
+  })
   .catch(err => next(err))
 }
