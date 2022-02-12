@@ -46,6 +46,7 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
+  // currentUser es una clave cuyos datos son los del req.user, que a su vez tiene los datos del usuario que se ha autenticado
   // NO ENTENDER.
   // Guarda al usuario de la sesión con el nombre "currentUser" para usarlo en todas las vistas
   // ¿En qué momento los datos del usuario autenticado por passport pasa al objeto res.locals?
