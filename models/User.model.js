@@ -28,6 +28,19 @@ const userSchema = new mongoose.Schema({
   image: {
     type: String,
     default: 'https://res.cloudinary.com/robertcach/image/upload/v1644667037/ironhack/default-avatar_olia0m.png'
+  },
+  active: {
+    type: Boolean,
+    default: false
+  },
+  activationToken: {
+    type: String,
+    default: () => {
+      return Math.random().toString(36).substring(7) +
+      Math.random().toString(36).substring(7) +
+      Math.random().toString(36).substring(7) +
+      Math.random().toString(36).substring(7)
+    }
   }
 });
 

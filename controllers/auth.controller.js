@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const passport = require('passport');
 const User = require('../models/User.model');
+const mailer = require('../config/mailer.config')
 
 
 module.exports.register = (req, res, next) => {
@@ -23,11 +24,13 @@ module.exports.doRegister = (req, res, next) => {
       if (userFound) {
         renderWithErrors({ email: 'Email already in user' }) // email es una clave del objeto "errors"
       } else {
-          if (req.file){
+          if (req.file){ // "req.file" contien las imágenes subidas al formulario
             user.image = req.file.path
           }
           return User.create(user)
-            .then(() => {
+            .then((createdUser) => {
+              mailer.sendActivationMail(createdUser.email, createdUser.activationToken)
+              // Llamamos a la función "sendActivationMail" pasando como parámetros los valores de las clave "email" y "activatioToken" del usuario que ha creado
               res.redirect('/login')
             })
       }
@@ -75,4 +78,15 @@ module.exports.doLoginGoogle = (req, res, next) => {
 module.exports.logout = (req, res, next) => {
   req.logout();
   res.redirect('/login');
+}
+
+module.exports.active = (req, res, next) => {
+  const activationToken = req.params.token;
+
+  User.findOneAndUpdate(
+    { activationToken, active: false }, // Busca al usuario que cumple con esos dos parámetros de búsqueda
+    { active: true } // Luego cambia el valor de "active" a "true".
+  )
+  .then(() => res.redirect('/login'))
+  .catch(err => next(err))
 }
