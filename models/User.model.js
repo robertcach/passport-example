@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
   },
   googleID: {
     type: String
+  },
+  image: {
+    type: String,
+    default: 'https://res.cloudinary.com/robertcach/image/upload/v1644667037/ironhack/default-avatar_olia0m.png'
   }
 });
 

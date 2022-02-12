@@ -23,10 +23,13 @@ module.exports.doRegister = (req, res, next) => {
       if (userFound) {
         renderWithErrors({ email: 'Email already in user' }) // email es una clave del objeto "errors"
       } else {
-        return User.create(user)
-          .then(() => {
-            res.redirect('/login')
-          })
+          if (req.file){
+            user.image = req.file.path
+          }
+          return User.create(user)
+            .then(() => {
+              res.redirect('/login')
+            })
       }
     })
     .catch(err=> {
